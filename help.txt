@@ -1,0 +1,6 @@
+curl -X POST http://localhost:3000/api/incidents \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "Logs": "[ERROR] This is an error log from User Service that we can obtain using Fluent Bit.",
+    "ServiceName": "order-service"
+  }'
