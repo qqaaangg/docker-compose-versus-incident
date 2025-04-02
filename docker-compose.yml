@@ -2,13 +2,12 @@ services:
   versus_incident:
     image: ghcr.io/versuscontrol/versus-incident:latest
     volumes:
-      - ./config.yaml:/app/config.yaml
-      - ./template:/app/template:ro
+      - ./config:/app/config
     ports:
       - 3000:3000
     container_name: versus_incident
     env_file:
-      - .env.sample
+      - .env
     networks:
       - local_network
 networks:

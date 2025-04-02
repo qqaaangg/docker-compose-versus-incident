@@ -1,0 +1,63 @@
+name: versus
+host: 0.0.0.0
+port: 3000
+public_host: https://your-ack-host.example # Required for on-call ack
+
+alert:
+  debug_body: true  # Default value, will be overridden by DEBUG_BODY env var
+
+  slack:
+    enable: false  # Default value, will be overridden by SLACK_ENABLE env var
+    token: ${SLACK_TOKEN}            # From environment
+    channel_id: ${SLACK_CHANNEL_ID}  # From environment
+    template_path: "/app/config/slack.tmpl"
+
+  telegram:
+    enable: false
+    bot_token: ${TELEGRAM_BOT_TOKEN}
+    chat_id: ${TELEGRAM_CHAT_ID}
+    template_path: "/app/config/telegram.tmpl"
+
+  email:
+    enable: false # Default value, will be overridden by EMAIL_ENABLE env var
+    smtp_host: ${SMTP_HOST} # From environment
+    smtp_port: ${SMTP_PORT} # From environment
+    username: ${SMTP_USERNAME} # From environment
+    password: ${SMTP_PASSWORD} # From environment
+    to: ${EMAIL_TO} # From environment
+    subject: ${EMAIL_SUBJECT} # From environment
+    template_path: "/app/config/email.tmpl"
+
+  msteams:
+    enable: false # Default value, will be overridden by MSTEAMS_ENABLE env var
+    webhook_url: ${MSTEAMS_WEBHOOK_URL}
+    template_path: "/app/config/msteams.tmpl"
+
+queue:
+  enable: true
+  debug_body: true
+
+  # AWS SNS
+  sns:
+    enable: false
+    https_endpoint_subscription_path: /sns # URI to receive SNS messages, e.g. ${host}:${port}/sns or ${https_endpoint_subscription}/sns
+    # Options If you want to automatically create an sns subscription
+    https_endpoint_subscription: ${SNS_HTTPS_ENDPOINT_SUBSCRIPTION} # If the user configures an HTTPS endpoint, then an SNS subscription will be automatically created, e.g. https://your-domain.com
+    topic_arn: ${SNS_TOPIC_ARN}
+
+oncall:
+  ### Enable overriding using query parameters
+  # /api/incidents?oncall_enable=false => Set to `true` or `false` to enable or disable on-call for a specific alert
+  # /api/incidents?oncall_wait_minutes=0 => Set the number of minutes to wait for acknowledgment before triggering on-call. Set to `0` to trigger immediately
+  enable: false
+  wait_minutes: 3 # If you set it to 0, it means there’s no need to check for an acknowledgment, and the on-call will trigger immediately
+
+  aws_incident_manager: # Overrides the default AWS Incident Manager response plan ARN for a specific alert /api/incidents?awsim_response_plan_arn=arn:aws:ssm-incidents::111122223333:response-plan/example-response-plan
+    response_plan_arn: ${AWS_INCIDENT_MANAGER_RESPONSE_PLAN_ARN}
+
+redis: # Required for on-call functionality
+  insecure_skip_verify: true # dev only
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
+  password: ${REDIS_PASSWORD}
+  db: 0
